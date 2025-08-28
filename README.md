@@ -71,6 +71,19 @@ app.get('/vendors', async (req, res) => {
 
 ---
 
+### Inactive Vendor Logic
+
+Vendors are considered **inactive** if they haven’t been updated or marked active within 3 days.  
+This is handled using the following approach:
+
+1. **On Vendor Create/Update** → A `lastActive` timestamp is stored in MongoDB.
+2. **Dynamic Check (Option 1)** → Whenever vendors are fetched, the app compares the current date with `lastActive`. If more than 3 days have passed, the vendor is shown as **inactive**.
+3. **Background Update (Option 2)** → A scheduled job (e.g., using `node-cron`) can run daily to automatically mark vendors with `lastActive < now - 3 days` as **inactive**.
+
+This ensures vendors are always tracked properly without manual waiting.
+
+---
+
 ## What I’d Improve with More Time
 - **Auth & Roles**: Admin/vendor separation.
 - **Geo features**: Save precise coordinates; map view; filter nearby vendors.
